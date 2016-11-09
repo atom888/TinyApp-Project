@@ -1,13 +1,13 @@
 // Lighthouse Labs - W2D2 - TinyApp Project //
 
 
-//Config //
+// Config //
 
 var express = require("express");
 var app = express();
 var PORT = process.env.PORT || 8080; // default port 8080
 app.set("view engine", "ejs");
-//POST requests - body-parser
+//body-parser
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -50,28 +50,13 @@ app.get("/urls/:id", (req, res) => {
 // Request Routing
 app.post("/urls", (req, res) => {
 
-  function fixURL(brokenURL) {
-    if(longURL.startsWith("www.")) {
-      longURL = "https://" + longURL;
-      return longURL;
-    }
-    if (longURL.startsWith("http://")) {
-      return longURL;
-    }
-    if (longURL.startsWith("https://")) {
-      return longURL;
-    } else {
-      longURL = "https://wwww." + longURL;
-      return longURL;
-    }
-  };
-
   // Long url value
   let longURL = req.body.longURL;
+  let fixLongURL = fixURL(longURL);
   // generate short url
   let shortURL = generateRandomString();
   // add short and long URL values as key value pairs
-  urlDatabase[shortURL] = fixURL(longURL);
+  urlDatabase[shortURL] = fixLongURL;
   // redirect browser to /urls pair list
   res.redirect(`/urls/${shortURL}`);
 });
@@ -85,9 +70,21 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   let shortURL = req.params.id;
   delete urlDatabase[shortURL];
-  res.redirect("/urls");
+  res.redirect("/urls/");
 });
 
+
+app.get("/urls/:id/edit", (req, res) => {
+  res.redirect("/urls_show");
+});
+
+app.post("/urls/:id", (req, res) => {
+  let shortURL = req.params.id;
+  let newLongURL = req.body.longURL;
+  let fixLongURL = fixURL(newLongURL);
+  urlDatabase[shortURL] = fixLongURL;
+  res.redirect(`/urls/${shortURL}`);
+})
 
 
 
@@ -95,7 +92,12 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-
+function fixURL(longURL) {
+  if(!longURL.includes("://")) {
+    longURL = "https://" + longURL;
+  }
+  return longURL
+};
 
 
 function generateRandomString () {
