@@ -28,6 +28,10 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.get("/urls/new", (req, res) => { //new url
+  res.render("urls_new");
+});
+
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id,
                       fullURL: urlDatabase[req.params.id] };
@@ -39,19 +43,16 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 //Request Routing
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
-});
 
 app.post("/urls", (req, res) => {
   // Long url value
-  let longURL = req.body;
+  let longURL = req.body.longURL;
   // generate short url
-  let shortURL = generateRandomString;
+  let shortURL = generateRandomString();
   // add short and long URL values as key value pairs
   urlDatabase[shortURL] = longURL;
-  // redirect browser to /urls/short url
-  res.render("/urls");
+  // redirect browser to /urls as longURL with shortURL key
+  res.redirect("/urls");
 });
 
 // app.get("/u/:shortURL", (req, res) => {
@@ -69,5 +70,5 @@ app.listen(PORT, () => {
 
 
 function generateRandomString () {
-  return Math.random().toString(36).substring(7);
+  return Math.random().toString(36).substr(2, 6);
 }
