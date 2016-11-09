@@ -3,18 +3,18 @@
 <head>
   <title>TinyApp</title>
 </head>
-<body>
-
-  <header>
+ <header>
     <% include ./partials/_header %>
   </header>
+
+<body>
+
   <h2>URL and its shortened form.</h2>
   <ul>
      <% Object.keys(urls).forEach(function(key) { %>
-        <li> tiny.app/
-          <a href="<%= urls[key] %>"> <%= key %> </a>
+        <li>tiny.app/<a href="<%=urls[key]%>"><%= key %> </a>
           --
-          <a href="<%= urls[key] %>"> <%= urls[key] %> </a>
+          <a href="<%= urls[key] %>"><%= urls[key] %> </a>
         </li>
       <% }); %>
   </ul>

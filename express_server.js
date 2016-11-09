@@ -12,7 +12,8 @@ var urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  // res.end("Hello!");
+  res.redirect("/urls");
 });
 
 app.get("/hello", (req, res) => {
@@ -60,7 +61,6 @@ app.post("/urls", (req, res) => {
       longURL = "https://wwww." + longURL;
       return longURL;
     }
-
   };
 
   // Long url value
