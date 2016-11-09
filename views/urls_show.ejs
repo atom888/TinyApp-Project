@@ -9,7 +9,13 @@
   <% include ./partials/_header %>
 </header>
 
-  <p>  <%= shortURL %>  - <%= fullURL %></p>
+  <ul>
+      <li>
+        <a href="<%= fullURL %> ">tiny.app/<%= shortURL %> </a>
+        -
+        <a href="<%= fullURL %>"> <%= fullURL %> </a>
+      </li>
+  </ul>
 
 </body>
 </html>

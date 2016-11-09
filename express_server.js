@@ -52,13 +52,14 @@ app.post("/urls", (req, res) => {
   // add short and long URL values as key value pairs
   urlDatabase[shortURL] = longURL;
   // redirect browser to /urls pair list
-  res.redirect("/urls");
+  res.redirect(`/urls/${shortURL}`);
 });
 
-// app.get("/u/:shortURL", (req, res) => {
-//   let longURL =
-//   res.redirect(longURL);
-// });
+app.get("/u/:shortURL", (req, res) => {
+  let shortURL = req.params.shortURL;
+  let longURL = urlDatabase[shortURL];
+  res.redirect(longURL);
+});
 
 
 app.listen(PORT, () => {

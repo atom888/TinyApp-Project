@@ -11,7 +11,11 @@
   <h2>URL and its shortened form.</h2>
   <ul>
      <% Object.keys(urls).forEach(function(key) { %>
-        <li> <%= key %> -- <%= urls[key] %> </li>
+        <li> tiny.app/
+          <a href="<%= key %>"> <%= key %> </a>
+          --
+          <a href="<%= urls[key] %>"> <%= urls[key] %> </a>
+        </li>
       <% }); %>
   </ul>
 
