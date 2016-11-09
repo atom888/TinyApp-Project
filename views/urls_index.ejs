@@ -15,6 +15,9 @@
         <li>tiny.app/<a href="<%=urls[key]%>"><%= key %> </a>
           --
           <a href="<%= urls[key] %>"><%= urls[key] %> </a>
+            <form action="/urls/<%= key %>/delete" method="POST" style="margin-left:10px;">
+              <input id="shortURL" type="submit" value="Delete">
+            </form>
         </li>
       <% }); %>
   </ul>

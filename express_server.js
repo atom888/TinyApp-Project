@@ -1,10 +1,17 @@
 // Lighthouse Labs - W2D2 - TinyApp Project //
 
+
+//Config //
+
 var express = require("express");
 var app = express();
 var PORT = process.env.PORT || 8080; // default port 8080
-
 app.set("view engine", "ejs");
+//POST requests - body-parser
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
+
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -39,12 +46,8 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-//POST requests - body-parser
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
 
-//Request Routing
-
+// Request Routing
 app.post("/urls", (req, res) => {
 
   function fixURL(brokenURL) {
@@ -78,6 +81,14 @@ app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[shortURL];
   res.redirect(longURL);
 });
+
+app.post("/urls/:id/delete", (req, res) => {
+  let shortURL = req.params.id;
+  delete urlDatabase[shortURL];
+  res.redirect("/urls");
+});
+
+
 
 
 app.listen(PORT, () => {
