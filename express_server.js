@@ -51,7 +51,7 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   // add short and long URL values as key value pairs
   urlDatabase[shortURL] = longURL;
-  // redirect browser to /urls as longURL with shortURL key
+  // redirect browser to /urls pair list
   res.redirect("/urls");
 });
 
@@ -59,7 +59,6 @@ app.post("/urls", (req, res) => {
 //   let longURL =
 //   res.redirect(longURL);
 // });
-
 
 
 app.listen(PORT, () => {

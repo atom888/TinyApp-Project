@@ -10,12 +10,12 @@
   </header>
   <h2>URL and its shortened form.</h2>
   <ul>
-     <% for (var index in Object.keys(urls)) { %>
-        <li> <%= Object.keys(urls)[index] %></li>
-      <% }; %>
-
+     <% Object.keys(urls).forEach(function(key) { %>
+        <li> <%= key %> -- <%= urls[key] %> </li>
+      <% }); %>
   </ul>
-  <a href="">Click here to shorten new URL</a>
+
+  <a href="urls/new">Click here to shorten new URL</a>
 
 </body>
 </html>
