@@ -45,12 +45,30 @@ app.use(bodyParser.urlencoded({extended: true}));
 //Request Routing
 
 app.post("/urls", (req, res) => {
+
+  function fixURL(brokenURL) {
+    if(longURL.startsWith("www.")) {
+      longURL = "https://" + longURL;
+      return longURL;
+    }
+    if (longURL.startsWith("http://")) {
+      return longURL;
+    }
+    if (longURL.startsWith("https://")) {
+      return longURL;
+    } else {
+      longURL = "https://wwww." + longURL;
+      return longURL;
+    }
+
+  };
+
   // Long url value
   let longURL = req.body.longURL;
   // generate short url
   let shortURL = generateRandomString();
   // add short and long URL values as key value pairs
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = fixURL(longURL);
   // redirect browser to /urls pair list
   res.redirect(`/urls/${shortURL}`);
 });
