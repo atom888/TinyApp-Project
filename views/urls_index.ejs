@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang ="en">
+<head>
+  <title>TinyApp</title>
+</head>
+<body>
+
+  <header>
+    <% include ./partials/_header %>
+  </header>
+  <h2>URL and its shortened form.</h2>
+  <ul>
+     <% for (var index in Object.keys(urls)) { %>
+        <li> <%= Object.keys(urls)[index] %></li>
+      <% }; %>
+
+  </ul>
+  <a href="">Click here to shorten new URL</a>
+
+</body>
+</html>
