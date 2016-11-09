@@ -7,7 +7,7 @@ var express = require("express");
 var app = express();
 var PORT = process.env.PORT || 8080; // default port 8080
 app.set("view engine", "ejs");
-//body-parser
+// Body-parser
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -19,7 +19,6 @@ var urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  // res.end("Hello!");
   res.redirect("/urls");
 });
 
@@ -36,7 +35,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-app.get("/urls/new", (req, res) => { //new url
+app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
@@ -46,18 +45,11 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-
-// Request Routing
 app.post("/urls", (req, res) => {
-
-  // Long url value
   let longURL = req.body.longURL;
   let fixLongURL = fixURL(longURL);
-  // generate short url
   let shortURL = generateRandomString();
-  // add short and long URL values as key value pairs
   urlDatabase[shortURL] = fixLongURL;
-  // redirect browser to /urls pair list
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -73,7 +65,6 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls/");
 });
 
-
 app.get("/urls/:id/edit", (req, res) => {
   res.redirect("/urls_show");
 });
@@ -88,6 +79,7 @@ app.post("/urls/:id", (req, res) => {
 
 
 
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
@@ -98,7 +90,6 @@ function fixURL(longURL) {
   }
   return longURL
 };
-
 
 function generateRandomString () {
   return Math.random().toString(36).substr(2, 6);
