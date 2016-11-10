@@ -1,1 +1,24 @@
+<header>
+
 <h1>TinyApp - Project</h1>
+
+<% if(!username) {%>
+
+  <form action="/login" method="POST">
+    <label for="Username">Login:</label>
+    <input id="username" type="text" name="username" placeholder="Username">
+    <input type="submit" value="Sign In">
+  </form>
+
+<%} else {%>
+
+  <form action="/logout" method="POST">
+    <input type="submit" value="Sign Out">
+  </form>
+
+<%}   %>
+
+ <p><%= username %></p>
+
+
+ </header>

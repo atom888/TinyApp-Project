@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang ="en">
-<head>
-  <title>TinyApp</title>
-</head>
-  <header>
-    <% include ./partials/_header %>
-  </header>
+<% include ./partials/_head %>
+
 <body>
+
+    <% include ./partials/_header %>
+
+
   <h2>URL and its shortened form.</h2>
+
   <ul>
      <% Object.keys(urls).forEach(function(key) { %>
         <li>tiny.app/<a href="<%=urls[key]%>"><%= key %> </a>

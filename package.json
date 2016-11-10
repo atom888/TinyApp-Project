@@ -1,0 +1,28 @@
+{
+  "name": "TinyApp-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "express_server.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "cookieparser": "^0.1.0",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atom888/TinyApp-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/atom888/TinyApp-Project/issues"
+  },
+  "homepage": "https://github.com/atom888/TinyApp-Project#readme"
+}
