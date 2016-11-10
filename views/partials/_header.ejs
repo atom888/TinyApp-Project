@@ -2,23 +2,33 @@
 
 <h1>TinyApp - Project</h1>
 
-<% if(!username) {%>
+<% if(username)  { %>
 
+<nav>
+  <ul class="top nav" id="top nav">
+    <li><a href="/urls/new">Create</a></li>
+    <li><a href="/urls">Your URLs</a></li>
+  </ul>
+</nav>
+<% } %>
+
+<% if(!username) {%>
+<div class="logged-out">
   <form action="/login" method="POST">
     <label for="Username">Login:</label>
     <input id="username" type="text" name="username" placeholder="Username">
     <input type="submit" value="Sign In">
   </form>
-
+</div>
 <%} else {%>
-
-  <form action="/logout" method="POST">
-    <input type="submit" value="Sign Out">
-  </form>
-
+   <div class="logded-in">
+     <p><%= username %></p>
+      <form action="/logout" method="POST">
+        <input type="submit" value="Sign Out">
+      </form>
+  </div>
 <%}   %>
 
- <p><%= username %></p>
 
 
  </header>

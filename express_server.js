@@ -37,12 +37,18 @@ app.get("/urls.json", (req, res) => {
 
 
 app.get("/urls/new", (req, res ) => {
+  if (!req.cookies["username"]) {
+    res.redirect("/login");
+  }
   res.render("urls_new", {
     username: req.cookies["username"]
   });
 });
 
 app.get("/urls/:id", (req, res) => {
+  if (!req.cookies["username"]) {
+    res.redirect("/login");
+  }
   let templateVars = {
     shortURL: req.params.id,
     fullURL: urlDatabase[req.params.id],
@@ -53,6 +59,9 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  if (!req.cookies["username"]) {
+    res.redirect("/login");
+  }
   let templateVars = {
     urls: urlDatabase,
     username: req.cookies["username"]
@@ -61,6 +70,9 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  if (!req.cookies["username"]) {
+    res.redirect("/login");
+  }
   let longURL = req.body.longURL;
   let fixLongURL = fixURL(longURL);
   let shortURL = generateRandomString();
@@ -75,16 +87,25 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+  if (!req.cookies["username"]) {
+    res.redirect("/login");
+  }
   let shortURL = req.params.id;
   delete urlDatabase[shortURL];
   res.redirect("/urls/");
 });
 
 app.get("/urls/:id/edit", (req, res) => {
+  if (!req.cookies["username"]) {
+    res.redirect("/login");
+  }
   res.redirect("/urls_show");
 });
 
 app.post("/urls/:id", (req, res) => {
+  if (!req.cookies["username"]) {
+    res.redirect("/login");
+  }
   let shortURL = req.params.id;
   let newLongURL = req.body.longURL;
   let fixLongURL = fixURL(newLongURL);
@@ -94,6 +115,12 @@ app.post("/urls/:id", (req, res) => {
 
 /// Cookie Work ///
 
+app.get("/login", (req, res) => {
+  res.render("login", {
+    username: req.cookies["username"]
+  });
+});
+
 app.post("/login", (req, res) => {
   let username = req.body.username;
   res.cookie('username', username);
@@ -101,10 +128,8 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  Object.keys(req.cookies).forEach(function (property) {
-    res.clearCookie(property);
-  });
-  res.redirect("/urls");
+  res.clearCookie("username");
+  res.redirect("/login");
 })
 
 
