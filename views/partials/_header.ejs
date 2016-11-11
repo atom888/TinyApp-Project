@@ -15,13 +15,17 @@
 <% if(!username) {%>
 <div class="logged-out">
   <form action="/login" method="POST">
-    <label for="Username">Login:</label>
-    <input id="username" type="text" name="username" placeholder="Username">
-    <input type="submit" value="Sign In">
+    <label for="email">Email:</label>
+    <input id="email" type="email" name="email" style="width: 150px">
+    <br>
+    <label for="password">Password:</label>
+    <input id="password" type="password" name="password" style="width: 150px">
+    <br>
+    <input type="submit" value="Login">
   </form>
 </div>
 <%} else {%>
-   <div class="logded-in">
+   <div class="logged-in">
      <p><%= username %></p>
       <form action="/logout" method="POST">
         <input type="submit" value="Sign Out">
