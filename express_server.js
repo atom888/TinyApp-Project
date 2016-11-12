@@ -1,21 +1,6 @@
 // Lighthouse Labs - W2D2 - TinyApp Project //
 
 
-
-function lookupIndexInUrls(urls, shortUrl){
-  for (index in urls){
-    if (urls[index].shortURL === shortUrl){
-      return index;
-    }
-  }
-}
-
-function lookupLongInUrls(urls, shortUrl){
-  let index = lookupIndexInUrls(urls, shortUrl);
-  return urls[index].longURL;
-}
-
-
 // Config //
 
 const express = require("express");
@@ -63,7 +48,6 @@ const urlDatabase = {
 };
 
 
-
 const users = require("./user.json");
 
 app.get("/", (req, res) => {
@@ -94,18 +78,13 @@ app.get("/urls/:shortURL", (req, res) => { // Whenever a new URLS is created
     res.redirect("/login");
   } else {
 
-    // console.log("in urls/:id", res.locals.urls)
-
     let shortURL = req.params.shortURL;
     let fullURL = lookupLongInUrls(res.locals.urls, shortURL)
 
     let templateVars = {
       shortURL: shortURL,
-      fullURL: fullURL ///user input is stored into fullURL -- this worked
+      fullURL: fullURL
     };
-
-    // console.log(shortURL, fullURL);
-
     res.render("urls_show", templateVars);
   }
 });
@@ -137,7 +116,7 @@ app.post("/register", (req, res) => {
     }
   }
 
-  users[userID] = {}; //userID is key - needs to be an object
+  users[userID] = {};
   users[userID].id = userID;
   users[userID].email = email;
   users[userID].password = password;
@@ -149,7 +128,7 @@ app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   let fixLongURL = fixURL(longURL);
   let shortURL = generateRandomString();
-/// This works - do not alter
+
   var newObj = {
     shortURL: shortURL,
     longURL: fixLongURL
@@ -165,33 +144,21 @@ app.post("/urls", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[req.currentUser.id].urls[shortURL]; /// previous set :urlDatabase[shortURL]
+  let longURL = urlDatabase[req.currentUser.id].urls[shortURL];
   res.redirect(longURL);
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  // console.log("we're ready to delete ", req.params.id)
+
   if (!req.cookies["userID"]) {
     res.redirect("/login");
   }
-  let shortURL = req.params.id; //Testing ---- previously req.params.shortURL
+  let shortURL = req.params.id;
 
-
-  // console.log("me", req.currentUser.id);
-  // console.log("my entry in DB:", urlDatabase[req.currentUser.id])
   let myUrls = urlDatabase[req.currentUser.id].urls;
-  // console.log("myUrls", myUrls);
-  // console.log("shorturl", shortURL)
-  // console.log("index", lookupIndexInUrls(myUrls, shortURL))
+
   var removed = myUrls.splice(lookupIndexInUrls(myUrls, shortURL), 1);
-  // console.log("removed", removed);
 
-  // myUrls = myUrls.filter((entry) => entry.shortURL !== shortURL);
-  // urlDatabase[req.currentUser.id].urls = myUrls;
-
-
-  // console.log("myUrls", myUrls);
-  // console.log("everything", urlDatabase);
 
   res.redirect("/urls/");
 });
@@ -218,22 +185,9 @@ app.post("/urls/:id", (req, res) => {
   let shortURL = req.params.id;
   let newLongURL = req.body.longURL;
   let fixLongURL = fixURL(newLongURL);
-///////////// Testing
-
-///find index
-
   let indexValue = lookupIndexInUrls(res.locals.urls, shortURL);
 
   res.locals.urls[indexValue].longURL = fixLongURL;
-
-
-
-
-
-
-
-
-//////// Testing
 
   if (!req.currentUser) {
     res.redirect("/login");
@@ -246,8 +200,6 @@ app.post("/urls/:id", (req, res) => {
 /// Cookie Work ///
 
 app.get("/login", (req, res) => {
-
-  // res.render("login", {username: null}); // review
 
   if (req.cookies["userID"]) {
     res.redirect("/urls");
@@ -299,3 +251,16 @@ function generateRandomString () {
 function generateRandomUserID () {
   return Math.random().toString(36).substr(2, 20);
 }
+
+function lookupIndexInUrls(urls, shortUrl){
+  for (index in urls){
+    if (urls[index].shortURL === shortUrl){
+      return index;
+    }
+  }
+};
+
+function lookupLongInUrls(urls, shortUrl){
+  let index = lookupIndexInUrls(urls, shortUrl);
+  return urls[index].longURL;
+};
