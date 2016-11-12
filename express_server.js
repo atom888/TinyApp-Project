@@ -149,24 +149,13 @@ app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   let fixLongURL = fixURL(longURL);
   let shortURL = generateRandomString();
-
-
-  console.log("DB", urlDatabase);
-
-  // urlDatabase[req.currentUser.id].urls.shortURL = shortURL;
-
-  // urlDatabase[req.currentUser.id].urls.longURL = fixLongURL;
-
-  var myNewThing = {
+/// This works - do not alter
+  var newObj = {
     shortURL: shortURL,
     longURL: fixLongURL
   };
 
-  urlDatabase[req.currentUser.id].urls.push(myNewThing);
-
-//// need to place in an object ///
-  console.log("DB update!!!!!!!!!!!!!!", urlDatabase);
-
+  urlDatabase[req.currentUser.id].urls.push(newObj); /// able to push new url obj to DB
 
   if (!req.currentUser) {
     res.redirect("/login");
@@ -212,9 +201,12 @@ app.get("/urls/:id/edit", (req, res) => {
   if (!req.currentUser) {
     res.redirect("/login");
   } else {
+
+    let indexValue = lookupIndexInUrls(res.locals.urls, req.params.id);
+
     let templateVars = {
       shortURL: req.params.id,
-      fullURL: res.locals.urls[req.params.id],
+      fullURL: res.locals.urls[indexValue].longURL
     };
     res.render("urls_show", templateVars);
   }
@@ -226,24 +218,28 @@ app.post("/urls/:id", (req, res) => {
   let shortURL = req.params.id;
   let newLongURL = req.body.longURL;
   let fixLongURL = fixURL(newLongURL);
+///////////// Testing
 
-  // console.log("1st DB",urlDatabase);
-  urlDatabase[shortURL] = fixLongURL;
-  // console.log("updated DB",urlDatabase);
+///find index
+
+  let indexValue = lookupIndexInUrls(res.locals.urls, shortURL);
+
+  res.locals.urls[indexValue].longURL = fixLongURL;
 
 
 
 
 
+
+
+
+//////// Testing
 
   if (!req.currentUser) {
     res.redirect("/login");
   } else {
-    let templateVars = {
-      shortURL: req.params.id, // working
-      fullURL: fixLongURL // Working
-    };
-    res.render("urls_show", templateVars);
+
+    res.redirect(`/urls/${shortURL}/edit`);
   }
 });
 
