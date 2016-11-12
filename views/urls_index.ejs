@@ -8,14 +8,14 @@
   <h2>URL and its shortened form.</h2>
 
   <ul>
-     <% Object.keys(urls).forEach(function(key) { %>
-        <li>tiny.app/<a href="<%=urls[key]%>"><%= key %> </a>
+     <% urls.forEach(function(url) { %>
+        <li>tiny.app/<a href="<%=url.longURL%>"><%= url.shortURL %> </a>
           ---
-          <a href="<%= urls[key] %>"><%= urls[key] %> </a>
-            <form action="/urls/<%= key %>/delete" method="POST" style="margin-left:10px;">
+          <a href="<%= url.longURL %>"><%= url.longURL %> </a>
+          <form action="/urls/<%= url.shortURL %>/delete" method="POST" style="margin-left:10px;">
               <input id="shortURL" type="submit" value="Delete">
             </form>
-            <form action="/urls/<%= key %>" method="GET" style="margin-left:10px;">
+            <form action="/urls/<%= url.shortURL %>" method="GET" style="margin-left:10px;">
               <input id="shortURL" type="submit" value="Edit">
             </form>
         </li>
@@ -27,3 +27,5 @@
 </body>
 
 </html>
+
+

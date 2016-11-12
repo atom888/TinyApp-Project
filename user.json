@@ -1,1 +1,5 @@
-{"ajkhsdfjkasd" : {"id" : "ajkhsdfjkasd", "email" : "a@a.com", "password" : "p"} }
+{"ajkhsdfjkasd" :
+  {"id" : "ajkhsdfjkasd", "email" : "a@a.com", "password" : "p"},
+ "ghjgghhjhghjg" :
+  {"id" : "ghjgghhjhghjg", "email" : "email@email.com", "password" : "aaa"}
+}
