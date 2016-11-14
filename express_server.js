@@ -1,18 +1,39 @@
 // Lighthouse Labs - W2D2 - TinyApp Project //
 
 
-// Config //
+// Dependencies //
 
 const express = require("express");
 const app = express();
-var PORT = process.env.PORT || 8080; // default port 8080
-app.set("view engine", "ejs");
-//Body-parser
+const PORT = process.env.PORT || 8080; // default port 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
-//Cookie Parser
+
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
+
+const bcrypt = require('bcrypt');
+// const password = "purple-monkey-dinosaur"; // you will probably this from req.params
+// const hashed_password = bcrypt.hashSync(password, 10);
+
+// console.log(bcrypt.compareSync("purple-monkey-minn", hashed_password));
+
+const cookieSession = require('cookie-session');
+app.use(cookieSession ({
+  name: 'session',
+  keys: ["kittyboots", "secretkey"],
+  maxAge: 24 * 60 * 60 * 1000
+}));
+// app.use(session({
+//   secret: 'keyboard ninja cat',
+//   resave: false,
+//   saveUninitialized: true
+// }))
+
+app.set('trust proxy', 1)
+app.set("view engine", "ejs");
+
+
 
 app.use(function(req, res, next) {
   let userCookieInfo = req.cookies["userID"];
@@ -106,11 +127,11 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   let userID = generateRandomUserID();
-  let email = req.body.email;
-  let password = req.body.password;
+  // let email = req.body.email;
+  // let password = bcrypt.hashSync(req.body.password, 10);
 
   for (var i in users) {
-    if (users[i].email === email) {
+    if (req.body.email === users[i].email) {
       res.status(400);
       res.send('Email already taken!');
     }
@@ -118,8 +139,8 @@ app.post("/register", (req, res) => {
 
   users[userID] = {};
   users[userID].id = userID;
-  users[userID].email = email;
-  users[userID].password = password;
+  users[userID].email = req.body.email;
+  users[userID].password = bcrypt.hashSync(req.body.password, 10);
 
   res.redirect("/login");
 });
@@ -154,9 +175,7 @@ app.post("/urls/:id/delete", (req, res) => {
     res.redirect("/login");
   }
   let shortURL = req.params.id;
-
   let myUrls = urlDatabase[req.currentUser.id].urls;
-
   var removed = myUrls.splice(lookupIndexInUrls(myUrls, shortURL), 1);
 
 
@@ -209,8 +228,75 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+
   let loginEmail = req.body.email;
   let loginPassword = req.body.password;
+
+  let hashedPassword = bcrypt.hashSync(loginPassword, 10);
+
+
+
+  let user = null;
+  for (let userId in users) {
+    let userCandidate = users[userId];
+    if (userCandidate.email === loginEmail) {
+      user = userCandidate;
+    }
+
+  console.log("user",user);
+  console.log("users[userID]",users[userId]);
+  console.log("loginEmail",loginEmail);
+  console.log("userCandidate.email", userCandidate.email);
+
+   }
+
+  if (user === null) {
+    res.status(403).send
+  }
+
+
+/////////////// Testing crypt
+
+//   if (user === null) {
+//     res.status(403).send("Incorrect email or password. Please register or check your password.");
+//   } else {
+//     bcrypt.compare(loginPassword, user.password, function (err, passwordMatches) {
+//       if (err) {
+//         res.redirect("/login");
+//       }
+//       if (!passwordMatches) {
+//         res.status(401).send("401 Error");
+//       } else {
+//         req.session.userID = user.id;
+//         // res.cookie('userID', users[i].id);
+//         res.redirect("/urls");
+//       }
+//     });
+//   }
+
+// });
+
+  // for (var i in users) {
+  //   if (user === null) {
+  //     res.status(403).send("Incorrect email or password. Please register or check your password.");
+  //   } else {
+  //     bcrypt.compare(loginPassword, user.password, function (err, passwordMatches) {
+  //       if (err) {
+  //         res.direct("/login");
+  //       }
+  //       if (!passwordMatches) {
+  //         res.status(401).send("401 Error");
+  //       } else {
+  //         res.cookie('userID', users[i].id);
+  //         res.redirect("/urls");
+  //       }
+  //     })
+  //   }
+  // }
+
+
+
+///////////
 
   for (var i in users) {
     if(users[i].email === loginEmail) {
@@ -225,6 +311,8 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
+  // req.session.userID = null;
+
   res.clearCookie("userID");
   res.redirect("/login");
 })
