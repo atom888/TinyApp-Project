@@ -1,5 +1,14 @@
-{"ajkhsdfjkasd" :
-  {"id" : "ajkhsdfjkasd", "email" : "a@a.com", "password" : "p"},
- "ghjgghhjhghjg" :
-  {"id" : "ghjgghhjhghjg", "email" : "email@email.com", "password" : "aaa", "urls" : { "b12345" : "amazon.com"} }
+{
+  "ajkhsdfjkasd": {
+    "id" : "ajkhsdfjkasd",
+    "email" : "a@a.com",
+    "password" : "p"
+   },
+
+ "ghjgghhjhghjg": {
+    "id" : "ghjgghhjhghjg",
+    "email" : "email@email.com",
+    "password" : "aaa",
+    "urls" : { "b12345" : "amazon.com"}
+  }
 }

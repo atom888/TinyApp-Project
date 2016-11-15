@@ -13,10 +13,6 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 const bcrypt = require('bcrypt');
-// const password = "purple-monkey-dinosaur"; // you will probably this from req.params
-// const hashed_password = bcrypt.hashSync(password, 10);
-
-// console.log(bcrypt.compareSync("purple-monkey-minn", hashed_password));
 
 const cookieSession = require('cookie-session');
 app.use(cookieSession ({
@@ -24,22 +20,22 @@ app.use(cookieSession ({
   keys: ["kittyboots", "secretkey"],
   maxAge: 24 * 60 * 60 * 1000
 }));
-// app.use(session({
-//   secret: 'keyboard ninja cat',
-//   resave: false,
-//   saveUninitialized: true
-// }))
+
 
 app.set('trust proxy', 1)
 app.set("view engine", "ejs");
 
 
+/// req.currentUser relies on cookies -- could I replace with sessions?
+// how will this modify existing code that relies on this section?
 
 app.use(function(req, res, next) {
-  let userCookieInfo = req.cookies["userID"];
-  req.currentUser = users[userCookieInfo];
+  // let userCookieInfo = req.cookies["userID"]; hiding for session test
+  let userSessionInfo = req.session.userID;
+  // req.currentUser = users[userCookieInfo]; hiding for session test
+  req.currentUser = users[userSessionInfo];
   if (req.currentUser) {
-    res.locals.urls = urlDatabase[req.currentUser.id].urls;
+    res.locals.urls = urlDatabase[userSessionInfo].urls;
     res.locals.username = req.currentUser.email;
   }
   next();
@@ -68,8 +64,8 @@ const urlDatabase = {
   }
 };
 
-
 const users = require("./user.json");
+
 
 app.get("/", (req, res) => {
   res.redirect("/register");
@@ -120,30 +116,58 @@ app.get("/urls", (req, res) => {     /// Whenever the url pages loads
 
 app.get("/register", (req, res) => {
   let templateVars = {
-    username: req.cookies["userID"] /// review
+    // username: req.cookies["userID"] /// review hide for testing
+    username: req.session.email
   };
   res.render("register", templateVars);
-})
+});
+
 
 app.post("/register", (req, res) => {
   let userID = generateRandomUserID();
-  // let email = req.body.email;
-  // let password = bcrypt.hashSync(req.body.password, 10);
 
-  for (var i in users) {
-    if (req.body.email === users[i].email) {
-      res.status(400);
-      res.send('Email already taken!');
-    }
-  }
+///// testing crypt /////
 
-  users[userID] = {};
-  users[userID].id = userID;
-  users[userID].email = req.body.email;
-  users[userID].password = bcrypt.hashSync(req.body.password, 10);
+  const email = req.body.email;
+  const password = req.body.password;
 
-  res.redirect("/login");
+  console.log("submittied password:", password);
+  bcrypt.hash(password, 10, function (err, hash) {
+    const newUser = {
+     userID: userID,
+     username: email, // username is based on their email
+     password: hash
+    };
+
+    console.log("hash password:", hash);
+    users[userID] = newUser;
+    urlDatabase[userID] = {urls: []};
+
+    console.log("newUser info", newUser);
+
+    req.session.userID = userID;
+    res.redirect("/login");
+  });
+
+
+
 });
+
+
+//   for (var i in users) {
+//     if (req.body.email === users[i].email) {
+//       res.status(400);
+//       res.send('Email already taken!');
+//     }
+//   }
+
+//   users[userID] = {};
+//   users[userID].id = userID;
+//   users[userID].email = req.body.email;
+//   users[userID].password = bcrypt.hashSync(req.body.password, 10);
+
+//   res.redirect("/login");
+// });
 
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
@@ -171,7 +195,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
 
-  if (!req.cookies["userID"]) {
+  if (!req.session.userID) {            ///// add sessions
     res.redirect("/login");
   }
   let shortURL = req.params.id;
@@ -200,7 +224,6 @@ app.get("/urls/:id/edit", (req, res) => {
 
 app.post("/urls/:id", (req, res) => {
 
-
   let shortURL = req.params.id;
   let newLongURL = req.body.longURL;
   let fixLongURL = fixURL(newLongURL);
@@ -218,23 +241,32 @@ app.post("/urls/:id", (req, res) => {
 
 /// Cookie Work ///
 
-app.get("/login", (req, res) => {
+app.get("/login", (req, res) => { //// convert to session
 
-  if (req.cookies["userID"]) {
+  if (req.session.userID) {
     res.redirect("/urls");
   } else {
+    console.log("register fail");
     res.redirect("/register");
   }
 });
+//////Session test /// //////
+// replace app.get login with cookies
+
+// app.get("/login", function (req, res, next) {
+//   req.session.views = (req.session.views || 0) + 1
+
+//   res.end(req.session.views + 'views')
+// });
+
+
+
+
 
 app.post("/login", (req, res) => {
 
   let loginEmail = req.body.email;
   let loginPassword = req.body.password;
-
-  let hashedPassword = bcrypt.hashSync(loginPassword, 10);
-
-
 
   let user = null;
   for (let userId in users) {
@@ -242,17 +274,47 @@ app.post("/login", (req, res) => {
     if (userCandidate.email === loginEmail) {
       user = userCandidate;
     }
-
-  console.log("user",user);
-  console.log("users[userID]",users[userId]);
-  console.log("loginEmail",loginEmail);
-  console.log("userCandidate.email", userCandidate.email);
-
-   }
-
-  if (user === null) {
-    res.status(403).send
   }
+
+  if (user) {
+    bcrypt.compare(loginPassword, user.password, function (err, passwordMatches) {
+      if (passwordMatches) {
+        req.session.email = user.email;
+        res.redirect("/url");
+      } else {
+        // res.send("Password is incorrect. Login Fail");
+        res.redirect("/login");
+      }
+    });
+  } else {
+    res.status(403).send("Wrong username or password!");
+    // res.send("Wrong username or password"); // review specs to see if need to redirect or provide message
+    // res.redirect("/login");
+  }
+
+
+
+
+
+
+
+  // let user = null;
+  // for (let userId in users) {
+  //   let userCandidate = users[userId];
+  //   if (userCandidate.email === loginEmail) {
+  //     user = userCandidate;
+  //   }
+
+  // console.log("user",user);
+  // console.log("users[userID]",users[userId]);
+  // console.log("loginEmail",loginEmail);
+  // console.log("userCandidate.email", userCandidate.email);
+
+   // }
+
+  // if (user === null) {
+  //   res.status(403).send
+  // }
 
 
 /////////////// Testing crypt
@@ -298,24 +360,24 @@ app.post("/login", (req, res) => {
 
 ///////////
 
-  for (var i in users) {
-    if(users[i].email === loginEmail) {
-        if (users[i].password === loginPassword) {
-          res.cookie('userID', users[i].id);
-          res.redirect("/urls");
-          return;
-        }
-    }
-  }
-  res.status(403).send("Incorrect email or password. Please register or check your password.");
+  // for (var i in users) {
+  //   if(users[i].email === loginEmail) {
+  //       if (users[i].password === loginPassword) {
+  //         res.cookie('userID', users[i].id);
+  //         res.redirect("/urls");
+  //         return;
+  //       }
+  //   }
+  // }
+  // res.status(403).send("Incorrect email or password. Please register or check your password.");
 });
 
 app.post("/logout", (req, res) => {
-  // req.session.userID = null;
+  req.session.userID = null;
 
   res.clearCookie("userID");
   res.redirect("/login");
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -334,11 +396,11 @@ function fixURL(longURL) {
 
 function generateRandomString () {
   return Math.random().toString(36).substr(2, 6);
-}
+};
 
 function generateRandomUserID () {
   return Math.random().toString(36).substr(2, 20);
-}
+};
 
 function lookupIndexInUrls(urls, shortUrl){
   for (index in urls){
