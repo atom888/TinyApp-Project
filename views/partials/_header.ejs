@@ -1,38 +1,14 @@
 <header>
 
-<h1>TinyApp - Project</h1>
+<h2>Welcome to TinyApp v2</h2>
 
-<% if(username)  { %>
+<% if (!currentUser) { %>
+  <div class="logged-out">Not a currentUser</div>
 
-<nav>
-  <ul class="top nav" id="top nav">
-    <li><a href="/urls/new">Create</a></li>
-    <li><a href="/urls">Your URLs</a></li>
-  </ul>
-</nav>
-<% } %>
-
-<% if(!username) {%>
-<div class="logged-out">
-  <form action="/login" method="POST">
-    <label for="email">Email:</label>
-    <input id="email" type="email" name="email" style="width: 150px">
-    <br>
-    <label for="password">Password:</label>
-    <input id="password" type="password" name="password" style="width: 150px">
-    <br>
-    <input type="submit" value="Login">
-  </form>
-</div>
-<%} else {%>
-   <div class="logged-in">
-     <p><%= username %></p>
-      <form action="/logout" method="POST">
-        <input type="submit" value="Sign Out">
-      </form>
+<% } else { %>
+  <div class="logged-in">
+    <a href="/urls/new">Create</a>
+    <a href="/urls">Your URLs</a>
   </div>
-<%}   %>
-
-
-
- </header>
+<% } %>
+</header>

@@ -2,26 +2,23 @@
 
 <body>
 
-<main>
 <% include ./partials/_header %>
 
+<main>
 
-  <ul>
-    <li>
-      <a href="<%= fullURL %> ">tiny.app/<%= shortURL %> </a>
-      ---
-      <a href="<%= fullURL %>"> <%= fullURL %> </a>
-    </li>
-  </ul>
+  <h1>tiny.app/u/<%=shortURL%> - <a href="<%= fullURL %>"><%= fullURL %></a></h1>
+  <% if (fullURL === undefined) { %>
+    <p>&quot;<%= shortURL %>&quot;</p>
+    <% } else { %>
+    <% } %>
 
-  <form action="/urls/<%= shortURL %>" method="POST">
+  <form action="/urls/<%= shortURL %>" method="post">
     <label for="longURL">Update URL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" value="<%= fullURL %>" style="width: 300px">
       <input type="submit" value="Submit">
-    </form>
+   </form>
 
 </main>
 
 </body>
-
 </html>

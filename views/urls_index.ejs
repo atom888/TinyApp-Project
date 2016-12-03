@@ -2,30 +2,49 @@
 
 <body>
 
-    <% include ./partials/_header %>
-<main>
+<% include ./partials/_header %>
 
-  <h2>URL and its shortened form.</h2>
+<% if (currentUser) { %>
 
-  <ul>
-     <% urls.forEach(function(url) { %>
-        <li>tiny.app/<a href="<%=url.longURL%>"><%= url.shortURL %> </a>
-          ---
-          <a href="<%= url.longURL %>"><%= url.longURL %> </a>
-          <form action="/urls/<%= url.shortURL %>/delete" method="POST" style="margin-left:10px;">
-              <input id="shortURL" type="submit" value="Delete">
-            </form>
-            <form action="/urls/<%= url.shortURL %>" method="GET" style="margin-left:10px;">
-              <input id="shortURL" type="submit" value="Edit">
-            </form>
-        </li>
-      <% }); %>
-  </ul>
-  <a href="/urls/new">Click here to shorten new URL</a>
+  <p>Hello, <%= currentUser.email %></p>
+  <form method="post" action="/logout">
+    <p>
+      <button>Logout</button>
+    </p>
+  </form>
+<% } else { %>
+  <p><a href="/login">Sign In</a></p>
+  <p> Please Login</p>
+<% } %>
+<table>
+  <thead>
+  <tr>
+    <th>Short URL</th>
+    <th>Long URL</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% for (var url in urls) { %>
+    <tr>
+      <td><a href="<%= urls[url] %>"><%= url %></a></td>
+      <td><a href="<%= urls[url] %>"><%= urls[url] %></a></td>
+      <td>
+        <form action="/urls/<%= url %>/edit" method="GET" id="shortURL" type="submit" value="Edit">
+          <button>Edit</button>
+        </form>
+      </td>
+      <td>
+        <form action="/urls/<%= url %>/delete" method="POST" id="shortURL" type="submit" value="Delete">
+          <button>Delete</button>
+        </form>
+      </td>
+    </tr>
+  <% } %>
+  </tbody>
 
-</main>
+</table>
 </body>
-
 </html>
+
 
 
