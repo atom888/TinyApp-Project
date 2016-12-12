@@ -6,8 +6,8 @@
 
 <main>
 
-  <h1>tiny.app/u/<%=shortURL%> - <a href="<%= fullURL %>"><%= fullURL %></a></h1>
-  <% if (fullURL === undefined) { %>
+  <h1>tiny.app/u/<a href="<%= fullURL %>"><%=shortURL%></a>  - <%= fullURL %></h1>
+  <% if (!fullURL) { %>
     <p>&quot;<%= shortURL %>&quot;</p>
     <% } else { %>
     <% } %>
@@ -17,6 +17,7 @@
       <input id="longURL" type="text" name="longURL" placeholder="http://" value="<%= fullURL %>" style="width: 300px">
       <input type="submit" value="Submit">
    </form>
+
 
 </main>
 
