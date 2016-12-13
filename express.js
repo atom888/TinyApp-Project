@@ -59,6 +59,7 @@ const urlsDatabase = {
   }
 };
 
+
 ///////////////    Routes     ///////////////
 
 app.get("/urls.json", (req, res) => {
@@ -97,7 +98,7 @@ app.get("/urls", function(req, res) { // working
   const currentUser = req.session.userID;
   if (!req.currentUser) {
     res.status(401);
-    res.redirect("/login");
+    res.rebder("401");
   } else {
     var currentUserURLs = {};
     for (var userID in urlsDatabase) {
@@ -130,7 +131,7 @@ app.get("/urls", function(req, res) { // working
 app.get("/urls/new", function(req, res) {
   if (!req.currentUser) {
     res.status(401);
-    res.render("login") // render page with link to login?
+    res.render("401")
   } else {
     res.status(200);
     res.render("urls_new", {
@@ -155,33 +156,33 @@ app.get("/urls/new", function(req, res) {
 // "delete" button -> POST /urls/:id/delete
 
 app.get("/urls/:shortURL", function(req, res) { // working
+  console.log('get("/urls/:shortURL"', req.params.shortURL);
   if (!req.currentUser) {
     res.status(401);
-    res.render("login");
+    res.render("401");
   }
-  // Review with mentor
-  // for (let i in urlsDatabase) {
-  //   debugger
-  //   if (req.params.shortURL !== urlsDatabase[req.currentUser][i]) {
-  //     res.status(404);
-  //     res.send("shortURL doesn't exist!");
-  //   }
-  // }
-  if (req.currentUser.id !== req.session.userID) {
-    res.status(403);
-    res.redirect("/urls");
-  } else {
-    res.status(200);
-    let shortURL = req.params.shortURL;
-    let fullURL = urlsDatabase[req.currentUser.id][req.params.shortURL];
-
-    let templateVars = {
-      shortURL: shortURL,
-      fullURL: fullURL,
-      username: req.session.userID,
-      email: req.currentUser.email
-    };
-    res.render("urls_show", templateVars)
+  for(let user in urlsDatabase) {
+    if(urlsDatabase[user][req.params.shortURL]) {
+      if(user === req.currentUser.id) {
+        let shortURL = req.params.shortURL;
+        var fullURL = urlsDatabase[req.currentUser.id][req.params.shortURL];
+        let templateVars = {
+          shortURL: shortURL,
+          fullURL: fullURL,
+          username: req.session.userID,
+          email: req.currentUser.email,
+          hostname: req.get('host')
+        };
+        res.render("urls_show", templateVars)
+      } else {
+        res.status(403);
+        res.render("403");
+      }
+    }
+  }
+  if (!fullURL) {
+    res.status(404);
+    res.render("404");
   }
 });
 
@@ -191,20 +192,36 @@ app.get("/urls/:shortURL", function(req, res) { // working
 // otherwise:
 // returns a 404 response, HTML with a relevant error message
 
-app.get("/u/:id", function(req, res) { // review - share will all users - return shouldn't be there?
-    if (!req.params.id) {
-      res.status(404);
-      return;
+app.get("/u/:id", function(req, res) {
+
+
+for(let user in urlsDatabase) {
+    if(urlsDatabase[user][req.params.id]) {
+      let longURL = urlsDatabase[req.currentUser.id][req.params.id]
+      res.redirect(longURL);
     } else {
-      res.redirect(urlsDatabase[req.currentUser.id][req.params.id]);
+      res.status(403);
+      res.render("403")
     }
+  }
+  res.status(404);
+  res.render("404");
 });
 
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.currentUser.id][req.params.shortURL]
-  res.redirect(longURL);
-})
+for(let user in urlsDatabase) {
+    if(urlsDatabase[user][req.params.shortURL]) {
+      let longURL = urlsDatabase[req.currentUser.id][req.params.shortURL]
+      res.redirect(longURL);
+    } else {
+      res.status(403);
+      res.redirect("/urls")
+    }
+  }
+  res.status(404);
+  res.render("404");
+});
 
 
 
@@ -218,7 +235,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls", function(req, res) {
   if (!req.currentUser) {
     res.status(401);
-    res.redirect("/login");
+    res.render("401");
   }
 
   let longURL = fixURL(req.body.longURL);
@@ -228,35 +245,7 @@ app.post("/urls", function(req, res) {
   res.redirect(`/urls/${shortURL}`);
 });
 
-// POST /urls/:id
-// if url with :id does not exist:
-// returns a 404 response, HTML with a relevant error message
-// if user is not logged in:
-// returns a 401 response, HTML with a relevant error message and a link to /login
-// if user does not match the url owner:
-// returns a 403 response, HTML with a relevant error message
-// if all is well:
-// updates the url
-// redirect -> /urls/:id
 
-app.post("/urls/:id", function(req, res) { // FIXED
-  if (!req.currentUser) {
-    res.status(401);
-    res.redirect("/login");
-  }
-  if (req.params.id !== urlsDatabase[req.currentUser.id]) {
-    res.status(404);
-    return;
-  }
-  if (urlsDatabase[req.currentUser.id]) {
-    let updatedURL = req.body.longURL;
-    urlsDatabase[req.currentUser.id][req.params.id] = fixURL(updatedURL);
-    res.redirect(`/urls/${req.params.id}`);
-  } else {
-    res.status(403);
-    res.redirect("/urls");
-  }
-});
 
 // GET /login
 // if user is logged in:
@@ -403,17 +392,60 @@ app.post("/urls/:id/delete", function(req, res) { //working
   }
 });
 
-app.get("/urls/:id/edit", function(req, res) { //working
+app.get("/urls/:id/edit", function(req, res) { //not working
+    console.log('get("/urls/:id/edit"', req.params.id);
     if (!req.currentUser) {
       res.redirect("/login")
     } else {
+
       let templateVars = {
       shortURL: req.params.id,
-      fullURL: urlsDatabase[req.currentUser.id][this.shortURL]
+      fullURL: urlsDatabase[req.currentUser.id][req.params.id],
+      hostname: req.get('host')
       }
     res.render("urls_show", templateVars);
     };
 });
+
+app.post("/urls/:id/edit", function(req, res) {
+  console.log('post("/urls/:id/edit"', req.params.id);
+  let newLongURL = req.body.longURL
+  urlsDatabase[req.currentUser.id][req.params.id] = newLongURL;
+  res.redirect("/urls");
+});
+
+
+// POST /urls/:id
+// if url with :id does not exist:
+// returns a 404 response, HTML with a relevant error message
+// if user is not logged in:
+// returns a 401 response, HTML with a relevant error message and a link to /login
+// if user does not match the url owner:
+// returns a 403 response, HTML with a relevant error message
+// if all is well:
+// updates the url
+// redirect -> /urls/:id
+
+app.post("/urls/:id", function(req, res) { // FIXED
+  console.log('post("/urls/:id"', req.params.id);
+  if (!req.currentUser) {
+    res.status(401);
+    res.render("401");
+  }
+  if (req.params.id !== urlsDatabase[req.currentUser.id]) {
+    res.status(404);
+    res.render("404");
+  }
+  if (urlsDatabase[req.currentUser.id]) {
+    let updatedURL = req.body.longURL;
+    urlsDatabase[req.currentUser.id][req.params.id] = fixURL(updatedURL);
+    res.redirect(`/urls/${req.params.id}`);
+  } else {
+    res.status(403);
+    res.render("403");
+  }
+});
+
 
 function generateRandomString() {
   return Math.random().toString(36).substr(2, 6);
