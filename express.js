@@ -78,7 +78,6 @@ app.get("/", function(req, res) {
   } else {
     res.redirect("/urls");
   }
-
 });
 
 // GET /urls
@@ -193,36 +192,34 @@ app.get("/urls/:shortURL", function(req, res) { // working
 // returns a 404 response, HTML with a relevant error message
 
 app.get("/u/:id", function(req, res) {
-
-
-for(let user in urlsDatabase) {
-    if(urlsDatabase[user][req.params.id]) {
-      let longURL = urlsDatabase[req.currentUser.id][req.params.id]
-      res.redirect(longURL);
-    } else {
-      res.status(403);
-      res.render("403")
-    }
+  for(let user in urlsDatabase) {
+      if(urlsDatabase[user][req.params.id]) {
+        let longURL = urlsDatabase[req.currentUser.id][req.params.id]
+        res.redirect(longURL);
+      } else {
+        res.status(403);
+        res.render("403")
+      }
   }
   res.status(404);
   res.render("404");
+
 });
 
 
 app.get("/u/:shortURL", (req, res) => {
-for(let user in urlsDatabase) {
-    if(urlsDatabase[user][req.params.shortURL]) {
-      let longURL = urlsDatabase[req.currentUser.id][req.params.shortURL]
-      res.redirect(longURL);
-    } else {
-      res.status(403);
-      res.redirect("/urls")
-    }
+  for(let user in urlsDatabase) {
+      if(urlsDatabase[user][req.params.shortURL]) {
+        let longURL = urlsDatabase[req.currentUser.id][req.params.shortURL]
+        res.redirect(longURL);
+      } else {
+        res.status(403);
+        res.redirect("/urls")
+      }
   }
   res.status(404);
   res.render("404");
 });
-
 
 
 // POST /urls
@@ -244,7 +241,6 @@ app.post("/urls", function(req, res) {
 
   res.redirect(`/urls/${shortURL}`);
 });
-
 
 
 // GET /login
@@ -276,7 +272,6 @@ app.get("/login", function(req, res) {
 // "register" button -> POST /register
 
 app.get("/register", function(req, res) {
-
 
   if (req.currentUser) {
     res.redirect("/urls");
@@ -392,8 +387,7 @@ app.post("/urls/:id/delete", function(req, res) { //working
   }
 });
 
-app.get("/urls/:id/edit", function(req, res) { //not working
-    console.log('get("/urls/:id/edit"', req.params.id);
+app.get("/urls/:id/edit", function(req, res) { // working
     if (!req.currentUser) {
       res.redirect("/login")
     } else {
@@ -408,7 +402,6 @@ app.get("/urls/:id/edit", function(req, res) { //not working
 });
 
 app.post("/urls/:id/edit", function(req, res) {
-  console.log('post("/urls/:id/edit"', req.params.id);
   let newLongURL = req.body.longURL
   urlsDatabase[req.currentUser.id][req.params.id] = newLongURL;
   res.redirect("/urls");
@@ -426,7 +419,7 @@ app.post("/urls/:id/edit", function(req, res) {
 // updates the url
 // redirect -> /urls/:id
 
-app.post("/urls/:id", function(req, res) { // FIXED
+app.post("/urls/:id", function(req, res) { // working
   console.log('post("/urls/:id"', req.params.id);
   if (!req.currentUser) {
     res.status(401);
