@@ -2,18 +2,20 @@
 <body>
 <% include ./partials/_header %>
 <main>
-  <h2>Login</h2>
+  <h2 class="center topper">Login</h2>
+  <div class="center form-container">
     <form action="/login" method="post">
-      <label for="email"><h3>Email</h3></label>
+      <label for="email"><h3 class="center">Email</h3></label>
       <input id="email" type="email" name="email" placeholder="email@email.com" style="width: 300px">
       <br>
-      <label for="password"><h3>Password</h3></label>
+      <label for="password"><h3 class="center">Password</h3></label>
       <input id="password" type="password" name="password" placeholder="password" style="width: 300px">
       <br>
-      <input type="submit" value="Submit">
+      <input class="center button"type="submit" value="Submit">
     </form>
+  </div>
   <div class="welcome">
-  <h5>Register here. <a href="/register">Click Me.</a></h5>
+  <h5 class="center">Register here. <a href="/register">Click Me.</a></h5>
   </div>
   </main>
 
