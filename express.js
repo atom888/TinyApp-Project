@@ -339,7 +339,7 @@ app.post("/login", function(req, res) { //working
     }
   }
 
-  if (!user) { //user === null
+  if (!user) {
     res.status(403).send("Incorrect email or password. Please register or check your password");
   } else {
     bcrypt.compare(loginPassword, user.password, function (err, passwordMatches) {
