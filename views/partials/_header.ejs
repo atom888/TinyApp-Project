@@ -7,9 +7,18 @@
   <div class="logged-out"></div>
 
 <% } else { %>
-  <div class="logged-in">
-    <a href="/urls/new">Create</a>
-    <a href="/urls">Your URLs</a>
+  <div class="logged-in center">
+    <button class="button">
+      <a href="/urls/new">Create</a>
+    </button>
+    <button class="button">
+      <a href="/urls">URL List</a>
+    </button>
+
+    <form class="inline" method="post" action="/logout">
+      <button method="post" action="/logout" class="button">Logout</button>
+    </form>
+
   </div>
 <% } %>
 </header>
