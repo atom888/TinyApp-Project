@@ -6,45 +6,40 @@
 
 <% if (currentUser) { %>
 
-  <p>Hello, <%= currentUser.email %></p>
-  <form method="post" action="/logout">
-    <p>
-      <button>Logout</button>
-    </p>
-  </form>
+  <h2 class="center">Hello, <%= currentUser.email %></h2>
+
 <% } else { %>
   <p><a href="/login">Sign In</a></p>
   <p> Please Login</p>
 <% } %>
-<table>
-  <thead>
-  <tr>
-    <th>Short URL</th>
-    <th>Long URL</th>
-  </tr>
-  </thead>
-  <tbody>
-  <% for (var url in urls) { %>
+<div class="center">
+  <table>
+    <thead>
     <tr>
-      <td><a href="<%= urls[url] %>"><%= url %></a></td>
-      <td><a href="<%= urls[url] %>"><%= urls[url] %></a></td>
-      <td>
-        <form action="/urls/<%= url %>/edit" method="GET" id="shortURL" type="submit" value="Edit">
-          <button>Edit</button>
-        </form>
-      </td>
-      <td>
-        <form action="/urls/<%= url %>/delete" method="POST" id="shortURL" type="submit" value="Delete">
-          <button>Delete</button>
-        </form>
-      </td>
+      <th>Short URL</th>
+      <th>Long URL</th>
     </tr>
-  <% } %>
-  </tbody>
+    </thead>
+    <tbody>
+    <% for (var url in urls) { %>
+      <tr>
+        <td><a href="<%= urls[url] %>"><%= url %></a></td>
+        <td><a href="<%= urls[url] %>"><%= urls[url] %></a></td>
+        <td>
+          <form action="/urls/<%= url %>/edit" method="GET" id="shortURL" type="submit" value="Edit">
+            <button class="sml-button">Edit</button>
+          </form>
+        </td>
+        <td>
+          <form action="/urls/<%= url %>/delete" method="POST" id="shortURL" type="submit" value="Delete">
+            <button class="sml-button">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% } %>
+    </tbody>
 
-</table>
+  </table>
+</div>
 </body>
 </html>
-
-
-
